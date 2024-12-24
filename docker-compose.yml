@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mysql
+    restart: always
+    container_name: kardapiozz_database
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_DATABASE=kardapiozz_database
+      - MYSQL_ROOT_PASSWORD=admin
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-volume:/var/lib/mysql
+volumes: 
+  mysql-volume:
+    driver: local
