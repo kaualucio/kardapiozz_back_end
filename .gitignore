@@ -4,6 +4,7 @@ venv/
 env/
 .venv/
 
+
 __pycache__/
 *.py[cod]
 *.pyo
@@ -17,8 +18,8 @@ logs/
 *.db
 instance/
 
+migrations/
 migrations/versions/
-
 .vscode/
 
 .DS_Store

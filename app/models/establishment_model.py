@@ -1,11 +1,13 @@
-from typing import Optional, Any
+from typing import Any
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.inspection import inspect
 from sqlalchemy import DateTime, String, Text, ForeignKey
 from app.extensions.db import db
 from uuid import uuid4, UUID
 from sqlalchemy.types import JSON
 from datetime import datetime, timezone
-# from app.models.category_model import Category
+
+from app.models.menu_model import Menu
 
 class Establishment(db.Model):
   __tablename__ = 'establishment'
@@ -28,8 +30,8 @@ class Establishment(db.Model):
   is_information_set: Mapped[bool] = mapped_column(nullable=False, default=False)
   created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(tz=timezone.utc))
   updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(tz=timezone.utc))
-  
   category_id: Mapped[UUID] = mapped_column(ForeignKey('category.id'), nullable=True, unique=True)
+  # menus: Mapped[list['Menu']] = relationship('Menu', back_populates='establishment')
 
   
   def __init__(
@@ -67,20 +69,9 @@ class Establishment(db.Model):
   def __repr__(self):
     return f'<Establishment {self.name}, {self.email}, {self.is_active}>'
   
-  def to_dict(self):
-    return  {
-      'id': self.id,
-      'email': self.email,
-      'name': self.name,
-      'slug': self.slug,
-      'about': self.about,
-      'phone': self.phone,
-      'picture': self.picture,
-      'address': self.address,
-      'open_days': self.open_days,
-      'category_id': self.category_id,
-      'is_active': self.is_active,
-      'is_open': self.is_open,
-      'is_information_set': self.is_information_set,
-    }
-  
+  def to_dict(self, with_data_relations: bool = False):
+    dictionary = { c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs }
+    if with_data_relations:  
+      category_dictionary = self.category.to_dict() if self.category else None
+      dictionary['category'] = category_dictionary
+    return dictionary

@@ -76,7 +76,7 @@ class CognitoService:
           'SECRET_HASH': SECRET_HASH
         }
       )
-      return response
+      return response['AuthenticationResult']
     except exceptions.ClientError as error:
       raise error
   
@@ -99,11 +99,9 @@ class CognitoService:
 
   def logout(self, access_token, establishment_id):
     try:
-      SECRET_HASH = self._generate_hash_secret(establishment_id, config.COGNITO_CLIENT_ID, config.COGNITO_CLIENT_SECRET)
       response = self.client.global_sign_out(
         AccessToken=access_token
       )
-      # print(response)
       return response
     except exceptions.ClientError as error:
       print(error)

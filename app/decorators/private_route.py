@@ -2,9 +2,6 @@ import requests
 from app.config import Config
 from jose import jwt
 from jose.jwk import construct
-# from jose.utils import base64url_decode
-# from jose.exceptions import JWTError, ExpiredSignatureError, JWTClaimsError
-# from jose.backends.rsa import RSAKey
 from functools import wraps
 from flask import request, jsonify
 
@@ -47,10 +44,12 @@ def private_route():
       try:
         access_token = token.split(' ')[1]
         payload = verify_jwt(access_token)
-        return payload
+        request.user = payload
       except Exception as e:
         print(type(e))
         print('[VERIFY_JWT_DECORATOR_ERROR]', str(e))
         return jsonify({"message": str(e)}), 401 
+      
+      return f(*args, **kwargs)
     return decorated_function
   return decorator

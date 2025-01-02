@@ -41,10 +41,12 @@ def login():
     email=email, 
     password=password
   )
-  
   return jsonify({
-    'response': response
-  })
+    "access_token": response['AccessToken'],
+    "refresh_token": response['RefreshToken'],
+    "id_token": response['IdToken'],
+    "expires_in": response['ExpiresIn'],
+  }), 200
 
 @auth.route('/register', methods=['POST'])
 
@@ -87,7 +89,6 @@ def register():
       establishment_name=establishment_name,
       email=email,
       password=password,
-      
     )
     
     new_establishment = EstablishmentService.create_establishment(
@@ -183,7 +184,7 @@ def logout():
         'message': 'Token is missing'
       }), 401 
     token = access_token.split(' ')[1]
-    response = cognito_service.logout(access_token=token, establishment_id='')
+    response = cognito_service.logout(access_token=token)
     print(response)
     return jsonify({
       'message': 'Usuário deslogado com sucesso!'  
@@ -193,4 +194,3 @@ def logout():
     return jsonify({
       "message": 'Ocorreu um erro ao realizar o logout, tente novamente.'
     }), 400
-# ROUTE FOR RESET PASSWORD
